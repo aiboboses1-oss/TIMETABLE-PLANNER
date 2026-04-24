@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "course": {
+      "title": "Course",
+      "description": "A scheduled academic course",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the course"
+        },
+        "day": {
+          "type": "string",
+          "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "description": "The day of the week"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "time",
+          "description": "Start time (HH:mm)"
+        },
+        "endTime": {
+          "type": "string",
+          "format": "time",
+          "description": "End time (HH:mm)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the user who owns this course"
+        }
+      },
+      "required": ["name", "day", "startTime", "endTime", "userId"]
+    }
+  },
+  "firestore": {
+    "courses": {
+      "schema": "course",
+      "description": "Collection of courses scheduled by users"
+    }
+  }
+}

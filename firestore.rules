@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidCourse(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] &&
+             data.startTime is string && data.startTime.matches('^([01]\\d|2[0-3]):([0-5]\\d)$') &&
+             data.endTime is string && data.endTime.matches('^([01]\\d|2[0-3]):([0-5]\\d)$') &&
+             data.startTime < data.endTime &&
+             data.userId == request.auth.uid;
+    }
+
+    match /courses/{courseId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      allow create: if isSignedIn() && isValidCourse(request.resource.data) && isValidId(courseId);
+      
+      allow update: if isSignedIn() && 
+                    isOwner(resource.data.userId) &&
+                    isValidCourse(request.resource.data) &&
+                    request.resource.data.userId == resource.data.userId &&
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'day', 'startTime', 'endTime']);
+                    
+      allow delete: if isSignedIn() && isOwner(resource.data.userId);
+    }
+  }
+}

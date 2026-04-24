@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-primary: #059669; /* emerald-600 */
+  --color-brand-bg: #f7faf8;
+  --color-brand-ink: #1e293b; /* slate-800 */
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-brand-bg text-brand-ink;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-emerald-100 rounded-full hover:bg-emerald-200;
+}
+
+.course-block-label {
+  @apply text-[10px] font-bold leading-tight;
+}
+
+.course-block-meta {
+  @apply text-[9px] opacity-80 leading-tight;
+}
+
